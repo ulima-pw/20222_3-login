@@ -1,13 +1,19 @@
 const LoginPage = () => {
-    return <div>
+    return <div className="container">
         <h1>Login</h1>
         <div>
-            <input />
+            <label className="form-label">
+                Usuario
+            </label>
+            <input className="form-control" />
         </div>
         <div>
-            <input />
+            <label className="form-label">
+                Password
+            </label>
+            <input className="form-control" />
         </div>
-        <button type="button">Login</button>
+        <button className="btn btn-primary" type="button">Login</button>
     </div>
 }
 
