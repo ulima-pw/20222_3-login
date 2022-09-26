@@ -6,6 +6,7 @@ const LoginPage = () => {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [carreraIdSelected, setCarreraIdSelected] = useState(-1)
+    const [error, setError] = useState(false)
 
     // Hook navegacion
     const navigate = useNavigate();
@@ -14,6 +15,9 @@ const LoginPage = () => {
         if (username !== "" && password !== "" && carreraIdSelected !== -1) {
             // Si puedo hacer el login
             navigate("/main")
+        }else {
+            // Error
+            setError(true)
         }
     }
 
@@ -54,6 +58,33 @@ const LoginPage = () => {
             onClick={ loginOnClick } >
                 Login
         </button>
+        <div>
+            {
+                (() => {
+                    // Validacion de formularios
+
+                    const arrAlerts = []
+                    if (error && username === ""){
+                        arrAlerts.push(<div className="alert alert-danger">
+                            Ingrese Username
+                        </div>)
+                    }
+                    if (error && password === ""){
+                        arrAlerts.push(<div className="alert alert-danger">
+                            Ingrese Password
+                        </div>)
+                    }
+                    if (error && carreraIdSelected === -1){
+                        arrAlerts.push(<div className="alert alert-danger">
+                            Seleccione carrera
+                        </div>)
+                    }
+                    return arrAlerts
+
+                })()
+            }
+            
+        </div>
     </div>
 }
 
