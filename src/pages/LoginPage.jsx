@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 
 const LoginPage = () => {
@@ -11,15 +11,44 @@ const LoginPage = () => {
     // Hook navegacion
     const navigate = useNavigate();
 
+    const httpLogin = () => {
+        // Abrir un canal de comunicacion con un backend (servidor)
+    
+        const prom = fetch("https://60b83e68b54b0a0017c03380.mockapi.io/users")
+        prom.then((resp) => {
+            // Tarea dada la respuesta del servidor
+            return resp.json()
+        }).then((data) => {
+            // data ya es un objeto javascript
+            setUsername(data[0].username)
+        })
+    }
+
+    // Utilizando async/await
+    const httpLoginAsyncAwait = async () => {
+        const resp = await fetch("https://60b83e68b54b0a0017c03380.mockapi.io/users")
+        const data = await resp.json()
+        setUsername(data[0].username)
+    }
+
+    // Efecto secundario: Este marca una porcion de codigo que se va a ejecutar
+    // una sola vez al cargar la pagina ([]), o cuando cambie una variable de estado.
+    useEffect(() => {
+        httpLoginAsyncAwait()
+    }, [])
+
+
     const loginOnClick = () => {
-        if (username !== "" && password !== "" && carreraIdSelected !== -1) {
+        //httpLogin();
+        /*if (username !== "" && password !== "" && carreraIdSelected !== -1) {
             // Si puedo hacer el login
             navigate("/main")
         }else {
             // Error
             setError(true)
-        }
+        }*/
     }
+
 
     return <div className="container">
         <h1>Login</h1>
