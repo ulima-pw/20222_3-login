@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 
 const URL_LOGIN = "https://script.google.com/macros/s/AKfycbzeIa6cIglsNGRurc7suTjytoBVluZt5ebWVmI10S_1XxoYSLvex8PEUfe9-DUEoJGW/exec?entity=login"
+const URL_CARRERAS = "https://script.google.com/macros/s/AKfycbzcXL0xn_GdwmaMAoH1TlLXVjBJqIlrYZdSwItJGn2nEpSgrBLW55-OO_41Ke9ndMpxwA/exec?entity=carreras"
 
 const LoginPage = () => {
     // Variables de estado
@@ -9,6 +10,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState("")
     const [carreraIdSelected, setCarreraIdSelected] = useState(-1)
     const [error, setError] = useState(false)
+    const [carrerasList, setCarrerasList] = useState([])
 
     // Hook navegacion
     const navigate = useNavigate();
@@ -32,16 +34,29 @@ const LoginPage = () => {
             `${URL_LOGIN}&codigo=${codigo}&password=${password}`
         )
         const data = await resp.json()
-        console.log(data)
-        //setUsername(data[0].username)
+        if (data.msg === "") {
+            // Login es correcto
+            navigate("/main")
+        }else {
+            // Login es incorrecto
+            setError(true)
+        }
     }
+
+    const httpGetCarrerasAsyncAwait = async () => {
+        const resp = await fetch(
+            `${URL_CARRERAS}`
+        )
+        const data = await resp.json()
+        setCarrerasList(data)
+    }
+
 
     // Efecto secundario: Este marca una porcion de codigo que se va a ejecutar
     // una sola vez al cargar la pagina ([]), o cuando cambie una variable de estado.
-    /*useEffect(() => {
-        httpLoginAsyncAwait()
-    }, [])*/
-
+    useEffect(() => {
+        httpGetCarrerasAsyncAwait()
+    }, [])
 
     const loginOnClick = () => {
         httpLoginAsyncAwait(username, password)
@@ -75,12 +90,17 @@ const LoginPage = () => {
                 value={ carreraIdSelected }
                 onChange={ (evt) => setCarreraIdSelected(evt.target.value) }>
                 <option value={ -1 }>--- Ingrese su carrera ---</option>
-                <option value={ 1 }>Ingeniería de Sistemas</option>
-                <option value={ 2 }>Ingeniería Industrial</option>
-                <option value={ 3 }>Ingeniería Civil</option>
+                {
+                    carrerasList.map((carrera) => {
+                        return <option key={`opt_${carrera.id}`} 
+                            value={ carrera.id }>
+                                { carrera.nombre }
+                        </option>
+                    })
+                }
             </select>
         </div>
-        <button className="btn btn-primary" 
+        <button className="btn btn-primary mt-2" 
             type="button"
             onClick={ loginOnClick } >
                 Login
@@ -92,19 +112,36 @@ const LoginPage = () => {
 
                     const arrAlerts = []
                     if (error && username === ""){
-                        arrAlerts.push(<div className="alert alert-danger">
-                            Ingrese Username
-                        </div>)
+                        arrAlerts.push(
+                            <div key="message_username" 
+                                className="alert alert-danger">
+                                Ingrese Username
+                            </div>
+                        )
                     }
                     if (error && password === ""){
-                        arrAlerts.push(<div className="alert alert-danger">
-                            Ingrese Password
-                        </div>)
+                        arrAlerts.push(
+                            <div key="message_password" 
+                                className="alert alert-danger">
+                                Ingrese Password
+                            </div>
+                        )
                     }
                     if (error && carreraIdSelected === -1){
-                        arrAlerts.push(<div className="alert alert-danger">
-                            Seleccione carrera
-                        </div>)
+                        arrAlerts.push(
+                            <div key="message_carreraIdSelected" 
+                                className="alert alert-danger">
+                                Seleccione carrera
+                            </div>
+                        )
+                    }
+                    if (error) {
+                        arrAlerts.push(
+                            <div key="message_login" 
+                                className="alert alert-danger">
+                                Error en Login
+                            </div>
+                        )
                     }
                     return arrAlerts
 
