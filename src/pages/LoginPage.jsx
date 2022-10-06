@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 
+const URL_LOGIN = "https://script.google.com/macros/s/AKfycbzeIa6cIglsNGRurc7suTjytoBVluZt5ebWVmI10S_1XxoYSLvex8PEUfe9-DUEoJGW/exec?entity=login"
+
 const LoginPage = () => {
     // Variables de estado
     const [username, setUsername] = useState("")
@@ -25,28 +27,24 @@ const LoginPage = () => {
     }
 
     // Utilizando async/await
-    const httpLoginAsyncAwait = async () => {
-        const resp = await fetch("https://60b83e68b54b0a0017c03380.mockapi.io/users")
+    const httpLoginAsyncAwait = async (codigo, password) => {
+        const resp = await fetch(
+            `${URL_LOGIN}&codigo=${codigo}&password=${password}`
+        )
         const data = await resp.json()
-        setUsername(data[0].username)
+        console.log(data)
+        //setUsername(data[0].username)
     }
 
     // Efecto secundario: Este marca una porcion de codigo que se va a ejecutar
     // una sola vez al cargar la pagina ([]), o cuando cambie una variable de estado.
-    useEffect(() => {
+    /*useEffect(() => {
         httpLoginAsyncAwait()
-    }, [])
+    }, [])*/
 
 
     const loginOnClick = () => {
-        //httpLogin();
-        /*if (username !== "" && password !== "" && carreraIdSelected !== -1) {
-            // Si puedo hacer el login
-            navigate("/main")
-        }else {
-            // Error
-            setError(true)
-        }*/
+        httpLoginAsyncAwait(username, password)
     }
 
 
